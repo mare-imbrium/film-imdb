@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 # ----------------------------------------------------------------------------- #
 #         File: searchactor.sh
 #  Description: Helps to get the actor name correct so we can further query
@@ -6,10 +6,10 @@
 #       Author: j kepler  http://github.com/mare-imbrium/canis/
 #         Date: 2015-11-19 - 14:20
 #      License: MIT
-#  Last update: 2015-11-19 20:58
+#  Last update: 2015-11-21 19:19
 # ----------------------------------------------------------------------------- #
 #  searchactor.sh  Copyright (C) 2012-2016 j kepler
-#  Last update: 2015-11-19 20:58
+#  Last update: 2015-11-21 19:19
 
 
 #-----------------------------------------------------------------------
@@ -18,6 +18,15 @@
 
 source ~/bin/sh_colors.sh
 
+_choose() {
+    PROMPT="$1"
+    CHOICES="$2"
+
+    echo "$PROMPT"
+    echo "$CHOICES"
+    read -k ans
+    RESULT="$ans"
+}
 #===  FUNCTION  ================================================================
 #         NAME:  usage
 #  DESCRIPTION:  Display usage information.
@@ -26,11 +35,23 @@ function usage ()
 {
 	cat <<- EOT
 
-  Usage :  ${0##/*/} [options] [--] 
+  Usage :  ${0##/*/} [options] <name>
 
   Options: 
   -h|help       Display this message
   -v|version    Display script version
+  -t|--type  [fmd] 
+                t = actress
+                a = actor (default)
+                d = director
+
+    Format of name should be "Lastname, Firstname" although only lastname or part of name can be given.
+    The database is large so try to give full lastname. The search is not case-sensitive.
+
+    e.g. 
+    $0 "Tracy, S"
+    $0 -t f "Cruz, Pen"
+    $0 -t d "Welles"
 
 	EOT
 }    # ----------  end of function usage  ----------
@@ -42,6 +63,7 @@ opt_verbose=
 opt_debug=
 ScriptVersion="1.0"
 filename="actors";
+type="a"
 while [[ $1 = -* ]]; do
     case "$1" in
 
@@ -49,14 +71,6 @@ while [[ $1 = -* ]]; do
 
         -t|--type)   shift
             type=$1
-            case $type in
-                "f"|"actress")
-                    filename="actresses";;
-                "m"|"actor")
-                    filename="actors";;
-                "d"|"director")
-                    filename="directors";;
-            esac
             shift
             ;;
         -V|--verbose)   shift
@@ -74,23 +88,44 @@ while [[ $1 = -* ]]; do
     esac
 done
 
+patt="$*"
 if [ $# -eq 0 ]
 then
-    echo -n "Enter part of the name: "
-    read patt
+
+    _choose "Select one:" "d director\na actor\nt actress\n"
+    type=$RESULT
+    echo
+    echo -n "Enter starting part of the last name: "
+    read lname
+    echo -n "Enter starting part of the first name: "
+    read fname
+    if [[ -n "$lname" ]]; then
+        patt="^${lname}"
+    fi
+    if [[ -n "$fname" ]]; then
+        patt="${patt}.*, ${fname}"
+    fi
+
     #perror "\n\tUsage:  ${0##/*/} <Name (part of)>\n"; exit 1; 
 fi
-actfile="${filename}.t"
+case $type in
+    "t"|"actress")
+        filename="actresses";;
+    "a"|"actor")
+        filename="actors";;
+    "d"|"director")
+        filename="directors";;
+esac
+actfile="${filename}.list.utf-8.0.idx"
 if [[ ! -f "$actfile" ]]; then
     perror "$actfile not found"
     exit 1
 fi
-patt="$*"
 pinfo "Showing matches for: $patt"
-items=$(grep -i "$patt" $actfile )
+items=$(grep -i "$patt" $actfile | cut -f1 )
 lenitems=$( echo -e "${items}" | grep -c . )
 if (( $lenitems < 1 )); then
-    pbold "No matches for $patt"
+    pbold "No matches for $patt in $actfile"
     exit -1
 fi
 pinfo "$lenitems items"
@@ -114,6 +149,4 @@ elif [[ $index =~ [a-zA-Z] ]]; then
     items1=$(echo -e "$items" | grep -i "${index}")
     echo -e "$items1"
 fi
-
-
 
