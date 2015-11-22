@@ -6,10 +6,10 @@
 #       Author: j kepler  http://github.com/mare-imbrium/canis/
 #         Date: 2015-11-19 - 14:20
 #      License: MIT
-#  Last update: 2015-11-21 19:19
+#  Last update: 2015-11-21 19:45
 # ----------------------------------------------------------------------------- #
 #  searchactor.sh  Copyright (C) 2012-2016 j kepler
-#  Last update: 2015-11-21 19:19
+#  Last update: 2015-11-21 19:45
 
 
 #-----------------------------------------------------------------------
@@ -17,16 +17,9 @@
 #-----------------------------------------------------------------------
 
 source ~/bin/sh_colors.sh
+source ~/bin/snippets/sh/choose.zsh
 
-_choose() {
-    PROMPT="$1"
-    CHOICES="$2"
-
-    echo "$PROMPT"
-    echo "$CHOICES"
-    read -k ans
-    RESULT="$ans"
-}
+APPNAME="${0##/*/}"
 #===  FUNCTION  ================================================================
 #         NAME:  usage
 #  DESCRIPTION:  Display usage information.
@@ -35,7 +28,7 @@ function usage ()
 {
 	cat <<- EOT
 
-  Usage :  ${0##/*/} [options] <name>
+  Usage :  $APPNAME [options] <name>
 
   Options: 
   -h|help       Display this message
@@ -49,9 +42,9 @@ function usage ()
     The database is large so try to give full lastname. The search is not case-sensitive.
 
     e.g. 
-    $0 "Tracy, S"
-    $0 -t f "Cruz, Pen"
-    $0 -t d "Welles"
+    $APPNAME "Tracy, S"
+    $APPNAME -t f "Cruz, Pen"
+    $APPNAME -t d "Welles"
 
 	EOT
 }    # ----------  end of function usage  ----------
