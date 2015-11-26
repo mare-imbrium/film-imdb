@@ -1,6 +1,7 @@
 stub="actresses"
 TAB=$'\t'
 
+#   DESCRIPTION: removes only TV/V/VG entries from incoming IMDB file, creating .pru file
 
 export COLOR_RED="\\033[0;31m"
 export COLOR_GREEN="\\033[0;32m"
