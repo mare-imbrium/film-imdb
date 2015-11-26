@@ -5,7 +5,7 @@
 # 
 #         USAGE: ./nl.sh 
 # 
-#   DESCRIPTION: 
+#   DESCRIPTION: numbers standard input, printing in 2 columns if more than 15 items
 # 
 #       OPTIONS: ---
 #  REQUIREMENTS: ---
