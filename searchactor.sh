@@ -6,15 +6,12 @@
 #       Author: j kepler  http://github.com/mare-imbrium/canis/
 #         Date: 2015-11-19 - 14:20
 #      License: MIT
-#  Last update: 2015-11-21 19:45
+#  Last update: 2015-11-23 11:43
 # ----------------------------------------------------------------------------- #
 #  searchactor.sh  Copyright (C) 2012-2016 j kepler
-#  Last update: 2015-11-21 19:45
+#  Last update: 2015-11-23 11:43
 
 
-#-----------------------------------------------------------------------
-#  Check number of command line arguments
-#-----------------------------------------------------------------------
 
 source ~/bin/sh_colors.sh
 source ~/bin/snippets/sh/choose.zsh
@@ -81,6 +78,9 @@ while [[ $1 = -* ]]; do
     esac
 done
 
+#-----------------------------------------------------------------------
+#  Check number of command line arguments
+#-----------------------------------------------------------------------
 patt="$*"
 if [ $# -eq 0 ]
 then
