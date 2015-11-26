@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # ----------------------------------------------------------------------------- #
 #         File: searchimdb.sh
-#  Description: 
+#  Description: searches imdb full/pruned/topbilled files for actor or actress.
 #       Author: j kepler  http://github.com/mare-imbrium/canis/
 #         Date: 2015-11-17 - 20:58
 #      License: MIT
-#  Last update: 2015-11-18 12:58
+#  Last update: 2015-11-23 18:28
 # ----------------------------------------------------------------------------- #
 #  YFF Copyright (C) 2012-2014 j kepler
-#  Last update: 2015-11-18 12:58
+#  Last update: 2015-11-23 18:28
 
 # 1. option for search topbilled
 #    option for forcing use of long file and not pruned
@@ -24,21 +24,35 @@ opt_topbilled=
 ftype="2"
 stub="actors"
 
-while [[ $1 = -* ]]; do
-case "$1" in
-    -f|--filename)   shift
-                     filename=$1
-                     ;;
-    --pruned)   shift
-                ftype="2"
-                     ;;
-    --topbilled|--top)   shift
-                ftype="3"
-                     ;;
-    --actresses)   shift
-                stub="actresses"
-                     ;;
-    -h|--help)
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  new_indexed_search
+#   DESCRIPTION:  Searches actor or actress file with new byte index
+#    PARAMETERS:  
+#       RETURNS:  
+#-------------------------------------------------------------------------------
+new_indexed_search (){
+    idx="$ifile.0.idx"
+    if [[ ! -f "$idx" ]]; then
+        perror "$idx not found, Proceeding without index."
+        opt_index=
+    fi
+    lens=${#patt}
+    if (( lens < 4 )); then
+        perror "Pattern too short. Should be at least 4 characters"
+        exit 1
+    fi
+    if [[ -n "$opt_index" ]]; then
+        ./testindex.sh $stub "$patt"
+    else
+        pinfo "Simple search without index"
+        sed -n "/^${patt}/,/^$/p" $ifile 
+    fi
+}
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  usage
+#   DESCRIPTION:  print usage information
+#-------------------------------------------------------------------------------
+usage () {
 cat <<!
 $0 Version: 0.0.0 Copyright (C) 2015 jkepler
 This program searches the IMDB data giving detailed listings.
@@ -52,8 +66,33 @@ Rough sizes of files are:
 2. Pruned actor file:
 3. Actors top billed:
 
+Use --pruned for faster listing that doesn't print TV and VG entries
+
+Use --topbilled for even faster listings that don't print low billing appearances
+
+Use --actresses to see movies for an actress. Default is actors.
+
 If found, the program utilizes an index which cuts down the time for results appreciably.
 !
+}
+# ---- end of usage ----------------
+
+while [[ $1 = -* ]]; do
+case "$1" in
+    --full)   shift
+                ftype="1"
+                     ;;
+    --pruned)   shift
+                ftype="2"
+                     ;;
+    --topbilled|--top)   shift
+                ftype="3"
+                     ;;
+    --actresses)   shift
+                stub="actresses"
+                     ;;
+    -h|--help)
+        usage
         # no shifting needed here, we'll quit!
         exit
         ;;
@@ -68,7 +107,7 @@ done
 patt=""
 if [ $# -eq 0 ]
 then
-    perror "This program expects a name to search on"
+    perror "This program expects an actor name to search on"
     exit 1
 else
     pdone "Got $*"
@@ -78,7 +117,8 @@ fi
 ifile="$stub.list.utf-8"
 case $ftype in
     "1")
-        echo Using default big file..
+        echo Using default big file $ifile
+        echo "Use --pruned or --topbilled for smaller listings"
         ;;
     "2")
         ifile="$ifile.pru"
@@ -89,54 +129,38 @@ case $ftype in
 esac
 pinfo "using file $ifile"
 if [[ ! -f "$ifile" ]]; then
-    perror "$ifile not found"
+    perror "File: $ifile not found"
     exit 1
 fi
-idx="$ifile.2.idx"
-if [[ ! -f "$idx" ]]; then
-    perror "$idx not found, Proceeding without index."
-    opt_index=
-fi
-lens=${#patt}
-if (( lens < 4 )); then
-    perror "Pattern too short. Should be at least 4 characters"
-    exit 1
-fi
-key=${patt:0:2}
-key=$( echo "$key" | tr '[:lower:]' '[:upper:]' )
-if [[ -n "$opt_index" ]]; then
-    # pick up index
-    echo "Trying with 2 char index file $idx, key is $key"
-    grep -A 1 "^${key}" $idx 
-    IFS=$'\n' lines=($( grep -A 1 "^${key}" $idx | cut -f2 -d: ) )
-    rangest=${lines[@]:0:1}
-    rangeen=${lines[@]:1:1}
-    echo "range is  $rangest to $rangeen"
-    time (sed -n "$rangest,${rangeen}p" $ifile  | sed -n "/^${patt}/,/^$/p" )
-else
-    pinfo "Simple search without index"
-    time (sed -n "/^${patt}/,/^$/p" $ifile )
-fi
-
-# decide which infile to use
-#
+new_indexed_search $ifile "$patt"
 exit
-export TAB=$'\t'
-IFS=$'\n\t'
-APPNAME=$( basename $0 )
-# cron jobs can't access my env, and i don't want to expose mailid to spammers
 
-ext=${1:-"default value"}
-today=$(date +"%Y-%m-%d-%H%M")
-curdir=$( basename $(pwd))
-
-read yesno
-if [[ $yesno =~ [Yy] ]]; then
-else
-fi
-
-# print a message to stderr, preceded by the script name
-function warn {
-  echo -e "$0: $*" >&2
+#----------------- DEPRECATED --------------------------------------#
+old_index_search (){
+    idx="$ifile.2.idx"
+    if [[ ! -f "$idx" ]]; then
+        perror "$idx not found, Proceeding without index."
+        opt_index=
+    fi
+    lens=${#patt}
+    if (( lens < 4 )); then
+        perror "Pattern too short. Should be at least 4 characters"
+        exit 1
+    fi
+    key=${patt:0:2}
+    key=$( echo "$key" | tr '[:lower:]' '[:upper:]' )
+    if [[ -n "$opt_index" ]]; then
+        # pick up index
+        echo "Trying with 2 char index file $idx, key is $key"
+        grep -A 1 "^${key}" $idx 
+        IFS=$'\n' lines=($( grep -A 1 "^${key}" $idx | cut -f2 -d: ) )
+        rangest=${lines[@]:0:1}
+        rangeen=${lines[@]:1:1}
+        echo "range is  $rangest to $rangeen"
+        sed -n "$rangest,${rangeen}p" $ifile  | sed -n "/^${patt}/,/^$/p" 
+    else
+        pinfo "Simple search without index"
+        sed -n "/^${patt}/,/^$/p" $ifile 
+    fi
 }
 
