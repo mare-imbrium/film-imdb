@@ -1,6 +1,7 @@
 stub="actors"
 TAB=$'\t'
 
+# DESCRIPTION: removes TV,V,VG entries and non-topbilled movies from file, and creates topbilled file
 
 export COLOR_RED="\\033[0;31m"
 export COLOR_GREEN="\\033[0;32m"
