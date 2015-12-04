@@ -1,0 +1,20 @@
+## this file gives source file and target file
+## So we can compare dates of two and know that target is to be
+## generated.
+## However, it does not tell us how the target is to be made,
+## nor does it tell us how the source was created from the original IMDB
+## files
+
+directors.list.utf-8.0.idx directors.tsv
+# ./make_index.rb
+./directors.list.utf-8 directors.list.utf-8.0.idx
+# create_actor_list.sh
+actors.topbilled names.tsv
+actresses.topbilled names.tsv
+# ./create_top_billed.sh used to create
+./actors.list.utf-8 ./actors.topbilled
+./actresses.list.utf-8 ./actresses.topbilled
+# ./normalized.rb was run on aka-titles.pru to get tsv
+# pru was obtained by opening the utf-8 file in vim and deleting ", TV
+# VG and V.
+aka-titles.pru aka-titles.tsv
