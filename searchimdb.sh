@@ -5,10 +5,10 @@
 #       Author: j kepler  http://github.com/mare-imbrium/canis/
 #         Date: 2015-11-17 - 20:58
 #      License: MIT
-#  Last update: 2015-11-23 18:28
+#  Last update: 2015-11-27 09:30
 # ----------------------------------------------------------------------------- #
 #  YFF Copyright (C) 2012-2014 j kepler
-#  Last update: 2015-11-23 18:28
+#  Last update: 2015-11-27 09:30
 
 # 1. option for search topbilled
 #    option for forcing use of long file and not pruned
@@ -23,6 +23,8 @@ opt_pru=1
 opt_topbilled=
 ftype="2"
 stub="actors"
+OPT_VERBOSE=
+OPT_DEBUG=
 
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  new_indexed_search
@@ -42,7 +44,8 @@ new_indexed_search (){
         exit 1
     fi
     if [[ -n "$opt_index" ]]; then
-        ./testindex.sh $stub "$patt"
+        pdebug "calling testindex with :--$stub: and :$patt:"
+        ./testindex.sh "--$stub" "$patt"
     else
         pinfo "Simple search without index"
         sed -n "/^${patt}/,/^$/p" $ifile 
@@ -72,6 +75,10 @@ Use --topbilled for even faster listings that don't print low billing appearance
 
 Use --actresses to see movies for an actress. Default is actors.
 
+Others:
+  --verbose --no-verbose
+  --debug   view debug information
+
 If found, the program utilizes an index which cuts down the time for results appreciably.
 !
 }
@@ -89,8 +96,18 @@ case "$1" in
                 ftype="3"
                      ;;
     --actresses)   shift
-                stub="actresses"
-                     ;;
+        stub="actresses"
+        ;;
+    -V|--verbose) shift
+        OPT_VERBOSE=1
+        ;;
+    --debug) shift
+        OPT_DEBUG=1
+        ;;
+    --no-verbose) shift
+        OPT_VERBOSE=
+        ;;
+
     -h|--help)
         usage
         # no shifting needed here, we'll quit!
