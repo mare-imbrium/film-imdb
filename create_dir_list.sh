@@ -115,13 +115,18 @@ head t.t
 pinfo fixing name to firstname lastname format and putting roman numbers at end
 gsed  's/^\([^,]*\), \([^	]*\)/\2 \1/;' t.t | tee x.x | gsed  's/ \(([IVX]*)\)\([^	]*\)/\2 \1/' > t.tt
 pdone
-less t.tt
+head t.tt
 pinfo switching first and last columns
 echo Also sorting unique since directors file has some names duplicated ...
-awk -F$'\t' '{ print $2, $1  }' OFS=$'\t' t.tt | sort -u > $OFILE
+awk -F$'\t' '{ print $2, $1  }' OFS=$'\t' t.tt  | sponge t.tt
+echo "Removing roman numerals from the end. We don't use them in newname"
+gsed 's/ ([IVX]\+)$//' t.tt | sponge t.tt
+echo sorting unique
+sort -u t.tt > $OFILE
 pdone "created $OFILE"
 head $OFILE
 echo "..."
 look 'Ozu, ' $OFILE
+look 'Hitchcock, A' $OFILE
 wc -l $OFILE $INFILE
-pdone " Use this to import into movie.sqlite and resolve directors names"
+pdone " Use this to import into movie.sqlite using create_director.sh and resolve directors names"
