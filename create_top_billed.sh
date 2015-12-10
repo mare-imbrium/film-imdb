@@ -63,7 +63,8 @@ which gsed
 [[ $? -eq 1 ]] && { perror "gsed not available. Exiting."; exit 1; }
 which sponge
 [[ $?  -eq 1 ]] && { perror "Error: sponge not available." 1>&2; exit 1; }
-if [[ -f "$stub.topbilled" ]]; then
+# removed check since this needs to be automated and its okay really
+if [[ -f "$stub.topbilledXXXX" ]]; then
     perror "$stub.topbilled  will be overwritten, Pls delete or move before running this process."
     echo -n "Do you wish to continue? [yn] "
     read yesno
@@ -163,3 +164,4 @@ echo
 # 
 head $stub.topbilled
 pbold "Pls remove t.t and $stub.tmp files"
+echo you may now generate movie.tsv from the topbilled files using create_movie_list.sh
