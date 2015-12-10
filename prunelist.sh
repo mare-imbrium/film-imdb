@@ -62,5 +62,11 @@ wc -l $ofile
 ls -lh $ofile
 echo
 echo
-pinfo "Timing search for Tracy Spencer without index..."
-time (sed -n '/^Tracy, Spencer/,/^$/p'  $ofile >/dev/null)
+if [[ $stub == "actors" ]]; then
+    pinfo "Timing search for Tracy Spencer without index..."
+    time (sed -n '/^Tracy, Spencer/,/^$/p'  $ofile >/dev/null)
+elif [[ $stub == "actresses" ]]; then
+    pinfo "Timing search for Meryl Streep without index..."
+    time (sed -n '/^Streep, Meryl/,/^$/p'  $ofile >/dev/null)
+fi
+
