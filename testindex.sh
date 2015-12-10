@@ -5,7 +5,7 @@
 #       Author: j kepler  http://github.com/mare-imbrium/canis/
 #         Date: 2015-11-23 - 18:47
 #      License: MIT
-#  Last update: 2015-11-26 14:55
+#  Last update: 2015-11-30 12:41
 # ----------------------------------------------------------------------------- #
 #  testindex.sh  Copyright (C) 2012-2016 j kepler
 #  DONT make this interactive, have a shell over this that is interactive and makes
@@ -115,14 +115,14 @@ ScriptVersion="1.0"
 stub="actors"
 while [[ $1 = -* ]]; do
     case "$1" in
-        --actress)        shift
+        --actress|--actresses)        shift
             stub="actresses"
             ;;
-        --director)        shift
-            stub="director"
+        --director|--directors)        shift
+            stub="directors"
             ;;
-        --actor)        shift
-            stub="actor"
+        --actor|--actors)        shift
+            stub="actors"
             ;;
         -m|--max) shift
             opt_max=$1
