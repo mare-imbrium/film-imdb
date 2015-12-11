@@ -1,7 +1,13 @@
 #!/usr/bin/env ruby -w
 # ----------------------------------------------------------------------------- #
 #         File: make_index.rb
-#  Description: Generates an index file that has first char and lineno
+#  Description: This creates in index to look up actor or actress file by byteoffset.
+#  It ignores intro portion and then takes byte offset of every line that starts with A-Z.
+#  This is printed to another file. Use `look` for an actors name and get the byteoffset.
+#  Then use readbyte.rb to read from that offset to next blank line.
+#
+#  OUTDATE description.
+#  Generates an index file that has first char and lineno
 #     so when we are searching for an actor, take first char, and see which range it is in.
 #     Today the actor file contains a name for each alphabet, but what if alphabet does not exist.
 #     Then search will take full file.
