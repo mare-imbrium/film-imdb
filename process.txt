@@ -1,0 +1,45 @@
+THIS DOCUMENT describes the process of creating:
+1. actors actresses data
+
+convertiso8859toutf8.sh ./actors.list
+# this gives ./actors.list.utf-8
+convertiso8859toutf8.sh ./actresses.list
+
+        X ./prunelist.sh "actors"
+        X # this gives ./actors.list.utf-8.pru
+        X NOPE this is not used. PRU files are not used.
+
+./create_top_billed.sh is the first program after iso is converted to
+utf8. it does the pruning for all 3 actor/acrtress and director.
+it creates topbilled files.
+it should remove the (???? entries.
+
+create_movie_list.sh uses topbilled files create movie.tsv 
+
+create_actor_list.sh uses topbilled to generate actor list .. names.tsv 
+which has LN,FN | FN LN | GENDER
+
+  we use second field to map back to name
+  Actually, we can take a name and try reversing if no match.
+  Robert De Niro -- Niro, Robert De or De Niro, Robert.
+  No need to store separately. But we will need ascii form to match.
+
+We only check movies of a director, so we don't need to really keep it
+in the database.  we can just do an indexed LOOK of the utf file
+pruned. the indexed lookup should store the lowercase name ? so we can
+lowercase the incoming name and match easily without case, then look up
+byte. also store it in normal form ?
+But this way, we cannot sort by year since year is embedded.
+
+aka-titles.tsv :
+normalize.rb ./aka-titles.pru gives us aka-titles.tsv
+but HOW DO WE GET aka-titles.pru ??
+./prune-aka-titles.sh uses utf-8 file, and generates pru
+at some stage i moved aka-titles.l to pru, so i may have edited it in
+vim
+   - remove intro and end, remove till ^======
+   - at end remove everything after ^------------
+     ok, doesn't seem to be anything after but can't tell for future.
+   - remove everything as long as ^" before title. or (aka "
+   - remove all with (TV)$ or (TV))<TAB>
+   - same for VG and V.
