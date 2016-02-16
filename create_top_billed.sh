@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# # TODO BUG 2015-12-27 - movies that still have date as (????) should b removed.
 while [[ $1 = -* ]]; do
     case "$1" in
         --actress|--actresses)   shift
