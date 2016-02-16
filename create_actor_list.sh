@@ -56,7 +56,7 @@ echo Fixing the name and removing roman numbering in first column
 # this works but only for the case of command and (XX)
 #gsed 's/^\([^,]*\), \([^(]*\)([IVX]*)/\2 \1/' t.t | tr -s ' ' > t.tt
 # second case takes care of names with no number
-gsed 's/^\([^,]*\), \([^(]*\)([IVX]*)/\2 \1/;s/^\([^,]*\), \([^(]*\)	/\2 \1	/' t.t | tr -s ' ' > t.tt
+gsed 's/^\([^,]*\), \([^(]*\)([IVXL]*)/\2 \1/;s/^\([^,]*\), \([^(]*\)	/\2 \1	/' t.t | tr -s ' ' > t.tt
 
 wc -l t.tt
 echo Adding M and switching 1 and 2 cols
@@ -67,7 +67,7 @@ echo sorting ...
 sort M.t F.t > names.tsv
 wc -l names.tsv
 # Some single names have that (IVX) in them, many Indian names.
-gsed 's/^\([^	]*	\)\([^	]*\) ([IVX]*)\(	.*\)/\1\2\3/' names.tsv | sponge names.tsv
+gsed 's/^\([^	]*	\)\([^	]*\) ([IVXL]*)\(	.*\)/\1\2\3/' names.tsv | sponge names.tsv
 echo checking for double quotes in names
 grep -c '"' names.tsv
 echo escaping double quotes and sorting again
