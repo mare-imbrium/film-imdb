@@ -1,4 +1,8 @@
-stub="actresses"
+if [  $# -eq 0 ]; then
+    echo "Pass actor or actress"
+else
+    stub="$1"
+fi
 TAB=$'\t'
 
 #   DESCRIPTION: removes only TV/V/VG entries from incoming IMDB file, creating .pru file
@@ -34,6 +38,10 @@ cat <<!
 
 !
 ifile=$stub.list.utf-8
+if [[ ! -f "$ifile" ]]; then
+    echo "File: $ifile not found"
+    exit 1
+fi
 ofile="${ifile}.pru"
 if [[ -n "$FALSEXXX" ]]; then
     pinfo "Removing the intro and end section of the $ifile file ..."
@@ -56,10 +64,13 @@ egrep -v '(^		*"|^	.*\(TV\)|^	.*\(V\)|^	.*\(VG\))' $ifile > $ofile
 #egrep -v '(^		*"|\(TV\)|^	.*\(V\)|\(VG\))' t.t | sponge t.t
 
 pdone
+ct=$( egrep '(VG)|(TV)' $ofile | wc -l | cut -f1 -d' ' )
+echo "There are still $ct lines with TV or VG present since they are on the same row with name"
+ct=$( egrep '(????' $ofile | wc -l | cut -f1 -d' ' )
+echo "There are $ct lines with (????"
 
 echo
 wc -l $ofile
-ls -lh $ofile
 echo
 echo
 if [[ $stub == "actors" ]]; then
@@ -70,3 +81,4 @@ elif [[ $stub == "actresses" ]]; then
     time (sed -n '/^Streep, Meryl/,/^$/p'  $ofile >/dev/null)
 fi
 
+ls -lh $ofile
