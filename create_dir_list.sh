@@ -113,14 +113,14 @@ awk  -F$'\t' '{ print $1, $1 }' OFS=$'\t' $INFILE > t.t
 pdone
 head t.t
 pinfo fixing name to firstname lastname format and putting roman numbers at end
-gsed  's/^\([^,]*\), \([^	]*\)/\2 \1/;' t.t | tee x.x | gsed  's/ \(([IVX]*)\)\([^	]*\)/\2 \1/' > t.tt
+gsed  's/^\([^,]*\), \([^	]*\)/\2 \1/;' t.t | tee x.x | gsed  's/ \(([IVXL]*)\)\([^	]*\)/\2 \1/' > t.tt
 pdone
 head t.tt
 pinfo switching first and last columns
 echo Also sorting unique since directors file has some names duplicated ...
 awk -F$'\t' '{ print $2, $1  }' OFS=$'\t' t.tt  | sponge t.tt
 echo "Removing roman numerals from the end. We don't use them in newname"
-gsed 's/ ([IVX]\+)$//' t.tt | sponge t.tt
+gsed 's/ ([IVXL]\+)$//' t.tt | sponge t.tt
 echo sorting unique
 sort -u t.tt > $OFILE
 pdone "created $OFILE"
