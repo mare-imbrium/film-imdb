@@ -23,7 +23,7 @@ directories.
    that match pattern.
 
 3. Movies of a star ?
-   testindex.sh in imdb which can give all, pruned or topbilled very
+   `testindex.sh` in imdb which can give all, pruned or topbilled very
    fast
    rename it. and let topbilled and pruned or movies-only be an option
 
@@ -32,7 +32,7 @@ directories.
 5. what about the json database for friendlier selection of movies and
    basic data of a movie ?
 
-6. Determining a movie name or a star name. im.sh has program to find
+6. Determining a movie name or a star name. `im.sh` has program to find
    out. but need to be case insensitive. fuzzy
    Last search should be stored somewhere so one can go across files
    and it will be default. 
@@ -44,6 +44,7 @@ needs to be made common for all places and maybe sourced.
 
 CAST table should have year so we can sort movies of a character by
 year.
+
 # get movies with multiple actors:
 select title  from cast where name = "Astaire, Fred" or name = "Rogers,
 Ginger" group by title having count(title) > 1;
@@ -66,23 +67,4 @@ e.g. casablanca + 1942 maps to Casablanca (1942)
 similarly, names of actors and directors will be reversed, and possibly
 (I) added to make a mapping.
 
-
-2015-12-11 - 
-PLOT plot
-ignore CRC part.
-
-MV: Movie name
-PL: plot
-BY:
-ended by "---------"
-
-1) grep out all MV with byteoffset > indexfile
-2) remove all with MV: "  (TC shows). from indexfile
-3) modify readybte,rb so it reads till "-----". Should remove "MV: " and
-   "PL: " at start of output.
-
-4) do we really want to load this into a database ?
-
-5) prune the file ? Need to remove all entries MV: " with their
-   contents.
 
